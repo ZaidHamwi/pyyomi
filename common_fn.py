@@ -49,13 +49,23 @@ def read_from_appdata(relative_path):
 
 
 # For reading embedded files
+# def resource_path(relative_path):
+#     """ Get the absolute path to the resource (for both exe and dev modes) """
+#     try:
+#         # If the application is running as a PyInstaller executable
+#         base_path = sys._MEIPASS
+#     except AttributeError:
+#         # If running in development mode
+#         base_path = os.path.abspath(".")
+#
+#     return os.path.join(base_path, relative_path)
+
 def resource_path(relative_path):
     """ Get the absolute path to the resource (for both exe and dev modes) """
     try:
-        # If the application is running as a PyInstaller executable
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except AttributeError:
-        # If running in development mode
-        base_path = os.path.abspath(".")
-
+        # When running in development mode, get the folder of the main script
+        base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
     return os.path.join(base_path, relative_path)

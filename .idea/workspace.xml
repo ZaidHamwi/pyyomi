@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Set up">
-      <change afterPath="$PROJECT_DIR$/common_fn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/pages/home.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/pages/settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/ui_sidebar.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common_fn.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_fn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/ui_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +61,11 @@
     "ignore.virus.scanning.warn.message": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hamwi\PycharmProjects\pyyomi\ui" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pyyomi" />
@@ -142,7 +150,23 @@
       <option name="project" value="LOCAL" />
       <updated>1762967641245</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Set up">
+      <option name="closed" value="true" />
+      <created>1762968633131</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1762968633131</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Set up">
+      <option name="closed" value="true" />
+      <created>1762968679021</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1762968679021</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
