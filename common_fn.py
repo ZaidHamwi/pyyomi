@@ -69,3 +69,22 @@ def resource_path(relative_path):
         # When running in development mode, get the folder of the main script
         base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
     return os.path.join(base_path, relative_path)
+
+# Stylesheets
+cutie_label_style = """
+QLabel {
+    color: white;
+    background-color: #444444;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px;
+    border-radius: 8px;
+}
+"""
+boldie_label_style = """
+QLabel {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+"""
