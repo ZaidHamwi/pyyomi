@@ -18,5 +18,6 @@ class HomePage(QWidget):
 
         continue_wdg = ScrollWidget()
         layout.addWidget(continue_wdg)
+
         for i in range(10):
             continue_wdg.add_image(resource_path("embedded_images/demo.jpg"))

@@ -99,11 +99,10 @@ class ScrollWidget(QWidget):
     """
     A reusable horizontal scroll widget where you can add widgets (e.g., image covers)
     """
-    def __init__(self, parent=None, item_height=200, item_width=150, item_spacing=10):
+    def __init__(self, parent=None, item_height=200, item_spacing=10):
         super().__init__(parent)
 
         self.item_height = item_height
-        self.item_width = item_width
         self.item_spacing = item_spacing
 
         # Main layout
@@ -115,31 +114,36 @@ class ScrollWidget(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setFixedHeight(item_height + 20)  # space for scrollbar
+        self.scroll.setFixedHeight(self.item_height + 20)  # space for scrollbar
 
         # Container inside scroll
         self.container = QWidget()
         self.h_layout = QHBoxLayout(self.container)
         self.h_layout.setContentsMargins(10, 0, 10, 0)
-        self.h_layout.setSpacing(item_spacing)
+        self.h_layout.setSpacing(self.item_spacing)
 
         self.scroll.setWidget(self.container)
         self.main_layout.addWidget(self.scroll)
 
     def add_widget(self, widget: QWidget):
         """
-        Add a widget (e.g., QLabel with image) to the scroll area
+        Add a widget to the scroll area.
+        Forces the widget to have the fixed height of this scroll widget.
         """
-        # Force widget height to match scroll area
         widget.setFixedHeight(self.item_height)
         self.h_layout.addWidget(widget)
 
     def add_image(self, image_path: str):
         """
-        Convenience method: add a QLabel with scaled image
+        Add an image QLabel, automatically scaled to fixed height while preserving aspect ratio.
         """
         label = QLabel()
         pix = QPixmap(image_path)
+        if pix.isNull():
+            print(f"Warning: could not load image '{image_path}'")
+            return
+
+        # Scale to fixed height, keep aspect ratio
         pix = pix.scaledToHeight(self.item_height, Qt.SmoothTransformation)
         label.setPixmap(pix)
         label.setFixedSize(pix.size())
@@ -147,9 +151,10 @@ class ScrollWidget(QWidget):
         label.setCursor(Qt.PointingHandCursor)
         self.add_widget(label)
 
-    # Override wheel event for horizontal scrolling
     def wheelEvent(self, event):
-        # Scroll horizontally only
+        """
+        Scroll horizontally instead of vertically when using the mouse wheel
+        """
         scroll_bar = self.scroll.horizontalScrollBar()
         scroll_bar.setValue(scroll_bar.value() - event.angleDelta().y())
         event.accept()
