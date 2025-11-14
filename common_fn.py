@@ -2,6 +2,11 @@ import os
 import sys
 
 
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel
+
+
 def write_to_appdata(relative_path, data):
     # Get the path to the Roaming AppData directory
     appdata_path = os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming')
@@ -88,3 +93,55 @@ QLabel {
     font-weight: bold;
 }
 """
+
+
+class ScrollWidget(QWidget):
+    """
+    A reusable horizontal scroll widget where you can add widgets (e.g., image covers)
+    """
+    def __init__(self, parent=None, item_height=200, item_spacing=10):
+        super().__init__(parent)
+
+        self.item_height = item_height
+        self.item_spacing = item_spacing
+
+        # Main layout for this widget
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Scroll area
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setFixedHeight(item_height + 20)  # small padding for scroll bar
+
+        # Container widget inside scroll
+        self.container = QWidget()
+        self.h_layout = QHBoxLayout(self.container)
+        self.h_layout.setContentsMargins(10, 10, 10, 10)
+        self.h_layout.setSpacing(item_spacing)
+
+        self.scroll.setWidget(self.container)
+        self.main_layout.addWidget(self.scroll)
+
+    def add_widget(self, widget: QWidget):
+        """
+        Add a widget (e.g., QLabel with image) to the scroll area
+        """
+        self.h_layout.addWidget(widget)
+
+    def add_image(self, image_path: str, width=150, height=None):
+        """
+        Convenience function: add an image QLabel to the scroll
+        """
+        if height is None:
+            height = self.item_height
+        label = QLabel()
+        pix = QPixmap(image_path)
+        pix = pix.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        label.setPixmap(pix)
+        label.setFixedSize(pix.size())
+        label.setScaledContents(True)
+        label.setCursor(Qt.PointingHandCursor)
+        self.add_widget(label)
