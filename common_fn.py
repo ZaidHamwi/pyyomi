@@ -112,7 +112,7 @@ class ScrollWidget(QWidget):
         # Scroll area
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # make AlwaysOn for horizontal bar (looks ugly)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setFixedHeight(self.item_height + 20)  # space for scrollbar
 
