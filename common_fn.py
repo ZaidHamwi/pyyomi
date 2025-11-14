@@ -145,3 +145,12 @@ class ScrollWidget(QWidget):
         label.setScaledContents(True)
         label.setCursor(Qt.PointingHandCursor)
         self.add_widget(label)
+
+    # -----------------------------
+    # Override wheel event for horizontal scroll
+    # -----------------------------
+    def wheelEvent(self, event):
+        # Move horizontal scrollbar instead of vertical
+        scroll_bar = self.scroll.horizontalScrollBar()
+        scroll_bar.setValue(scroll_bar.value() - event.angleDelta().y())
+        event.accept()
