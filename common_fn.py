@@ -2,7 +2,7 @@ import os
 import sys
 
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QPropertyAnimation
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel
 
@@ -152,9 +152,16 @@ class ScrollWidget(QWidget):
         self.add_widget(label)
 
     def wheelEvent(self, event):
-        """
-        Scroll horizontally instead of vertically when using the mouse wheel
-        """
         scroll_bar = self.scroll.horizontalScrollBar()
-        scroll_bar.setValue(scroll_bar.value() - event.angleDelta().y())
+        target = scroll_bar.value() - event.angleDelta().y() / 2  # scaled target
+        target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), target))
+
+        anim = QPropertyAnimation(scroll_bar, b"value")
+        anim.setDuration(150)  # duration in ms
+        anim.setStartValue(scroll_bar.value())
+        anim.setEndValue(target)
+        anim.start()
+
+        # Keep a reference to prevent garbage collection
+        self._scroll_anim = anim
         event.accept()
