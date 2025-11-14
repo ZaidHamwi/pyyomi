@@ -97,8 +97,6 @@ class App(QtWidgets.QMainWindow):
         print('Connecting signals...')
         self.sidebar.page_selected.connect(self.switch_page)
 
-# ----------------------------------------------------------------------------------
-
     def switch_page(self, name):
         page = self.pages.get(name)
         if page:

@@ -1,7 +1,5 @@
 import os
 import sys
-
-
 from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel
@@ -94,13 +92,66 @@ QLabel {
 }
 """
 
+#fixme: THIS ENTIRE CLASS BELOW
+class SmoothScrollMixin:
+    """
+    Mixin that adds smooth scroll-wheel animation to ANY widget
+    containing a QScrollArea named 'scroll'.
 
-class ScrollWidget(QWidget):
+    Requirements:
+        - The class using this mixin MUST have:
+              self.scroll -> QScrollArea
+    """
+
+    def _init_smooth_scroll(self):
+        self._scroll_anim = None
+        self._scroll_target = 0
+
+    def wheelEvent(self, event):
+        if not hasattr(self, "scroll"):
+            # Fallback: behave normally
+            return super().wheelEvent(event)
+
+        scroll_bar = None
+        # Pick horizontal vs vertical automatically
+        if self.scroll.horizontalScrollBar().maximum() > 0:
+            scroll_bar = self.scroll.horizontalScrollBar()
+        elif self.scroll.verticalScrollBar().maximum() > 0:
+            scroll_bar = self.scroll.verticalScrollBar()
+        else:
+            # No scrollable range → do default scroll
+            return super().wheelEvent(event)
+
+        # scale wheel input
+        delta = event.angleDelta().y() / 4
+
+        # accumulate target
+        if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
+            self._scroll_target -= delta
+        else:
+            self._scroll_target = scroll_bar.value() - delta
+
+        # clamp
+        self._scroll_target = max(scroll_bar.minimum(),
+                                  min(scroll_bar.maximum(), self._scroll_target))
+
+        anim = QPropertyAnimation(scroll_bar, b"value")
+        anim.setDuration(150)
+        anim.setStartValue(scroll_bar.value())
+        anim.setEndValue(self._scroll_target)
+        anim.start()
+        self._scroll_anim = anim
+
+        event.accept()
+
+
+class ScrollWidget(QWidget, SmoothScrollMixin):
     """
     A reusable horizontal scroll widget where you can add widgets (e.g., image covers)
     """
-    def __init__(self, parent=None, item_height=200, item_spacing=10):
+    def __init__(self, parent=None, item_height=200, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False):
         super().__init__(parent)
+        self._init_smooth_scroll()
 
         # --- settings ---
         self.item_height = item_height
@@ -117,8 +168,14 @@ class ScrollWidget(QWidget):
         # --- scroll area ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        if h_scroll_bar:
+            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        else:
+            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        if v_scroll_bar:
+            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        else:
+            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setFixedHeight(self.item_height + 20)
 
         # --- container (holds the horizontal items) ---

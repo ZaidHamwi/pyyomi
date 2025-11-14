@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea, QFrame
 from PySide6.QtCore import Qt
-from common_fn import cutie_label_style, resource_path, ScrollWidget
+from common_fn import cutie_label_style, resource_path, ScrollWidget, SmoothScrollMixin
 
 
 class HomePage(QWidget):
