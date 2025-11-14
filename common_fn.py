@@ -102,21 +102,26 @@ class ScrollWidget(QWidget):
     def __init__(self, parent=None, item_height=200, item_spacing=10):
         super().__init__(parent)
 
+        # --- settings ---
         self.item_height = item_height
         self.item_spacing = item_spacing
 
-        # Main layout
+        # --- keep animation state (important!) ---
+        self._scroll_anim = None
+        self._scroll_target = 0
+
+        # --- main layout ---
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Scroll area
+        # --- scroll area ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # make AlwaysOn for horizontal bar (looks ugly)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setFixedHeight(self.item_height + 20)  # space for scrollbar
+        self.scroll.setFixedHeight(self.item_height + 20)
 
-        # Container inside scroll
+        # --- container (holds the horizontal items) ---
         self.container = QWidget()
         self.h_layout = QHBoxLayout(self.container)
         self.h_layout.setContentsMargins(10, 0, 10, 0)
@@ -151,32 +156,43 @@ class ScrollWidget(QWidget):
         label.setCursor(Qt.PointingHandCursor)
         self.add_widget(label)
 
-        self._scroll_anim = None
-        self._scroll_target = 0
-
     def wheelEvent(self, event):
-        scroll_bar = self.scroll.horizontalScrollBar()
-        delta = event.angleDelta().y() / 2  # scale for smooth feel
+        """
+        Smooth horizontal scrolling using an accumulating animation target.
+        Guards included so missing attributes or zero-range scroll do not crash.
+        """
+        try:
+            scroll_bar = self.scroll.horizontalScrollBar()
+        except Exception:
+            event.ignore()
+            return
 
-        # Update the target position
+        # If there's no range to scroll, ignore and don't animate
+        if scroll_bar.maximum() == scroll_bar.minimum():
+            event.ignore()
+            return
+
+        # Scale wheel delta for feel; adjust divisor to taste
+        delta = event.angleDelta().y() / 2
+
+        # If an animation is running, accumulate into the existing target.
+        # Use QAbstractAnimation.Running for the comparison (not the instance attribute).
         if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
-            # If animation is running, accumulate movement
             self._scroll_target -= delta
         else:
-            # Start from current value
             self._scroll_target = scroll_bar.value() - delta
 
-        # Clamp to scroll range
+        # Clamp target
         self._scroll_target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), self._scroll_target))
 
-        # Create animation
+        # Create and start an animation from current value -> target
         anim = QPropertyAnimation(scroll_bar, b"value")
         anim.setDuration(150)
         anim.setStartValue(scroll_bar.value())
         anim.setEndValue(self._scroll_target)
         anim.start()
 
-        # Prevent garbage collection
+        # Keep reference so GC doesn't kill it mid-animation
         self._scroll_anim = anim
 
         event.accept()
