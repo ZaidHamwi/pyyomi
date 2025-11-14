@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common_fn.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_fn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/home.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/home.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,7 +204,23 @@
       <option name="project" value="LOCAL" />
       <updated>1763144300687</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Prototyping">
+      <option name="closed" value="true" />
+      <created>1763144586283</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1763144586284</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Prototyping">
+      <option name="closed" value="true" />
+      <created>1763144931687</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1763144931687</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

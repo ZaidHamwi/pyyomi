@@ -2,7 +2,7 @@ import os
 import sys
 
 
-from PySide6.QtCore import Qt, QPropertyAnimation
+from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel
 
@@ -151,17 +151,32 @@ class ScrollWidget(QWidget):
         label.setCursor(Qt.PointingHandCursor)
         self.add_widget(label)
 
+        self._scroll_anim = None
+        self._scroll_target = 0
+
     def wheelEvent(self, event):
         scroll_bar = self.scroll.horizontalScrollBar()
-        target = scroll_bar.value() - event.angleDelta().y() / 2  # scaled target
-        target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), target))
+        delta = event.angleDelta().y() / 2  # scale for smooth feel
 
+        # Update the target position
+        if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
+            # If animation is running, accumulate movement
+            self._scroll_target -= delta
+        else:
+            # Start from current value
+            self._scroll_target = scroll_bar.value() - delta
+
+        # Clamp to scroll range
+        self._scroll_target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), self._scroll_target))
+
+        # Create animation
         anim = QPropertyAnimation(scroll_bar, b"value")
-        anim.setDuration(150)  # duration in ms
+        anim.setDuration(150)
         anim.setStartValue(scroll_bar.value())
-        anim.setEndValue(target)
+        anim.setEndValue(self._scroll_target)
         anim.start()
 
-        # Keep a reference to prevent garbage collection
+        # Prevent garbage collection
         self._scroll_anim = anim
+
         event.accept()
