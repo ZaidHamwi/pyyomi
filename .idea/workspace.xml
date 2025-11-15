@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common_fn.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_fn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/home.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/home.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -254,7 +252,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763147776464</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Prototyping">
+      <option name="closed" value="true" />
+      <created>1763183498369</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1763183498369</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
