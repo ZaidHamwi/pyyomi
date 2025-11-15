@@ -73,7 +73,7 @@ class App(QtWidgets.QMainWindow):
         self.sidebar.setFixedWidth(150)
 
         # Vertical QFrame
-        v_line = QtWidgets.QFrame()
+        v_line = QFrame()
         v_line.setFrameShape(QFrame.VLine)
         v_line.setFrameShadow(QFrame.Sunken)
         self.layout.addWidget(v_line)

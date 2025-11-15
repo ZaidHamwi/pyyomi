@@ -60,90 +60,42 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Stylesheets
-cutie_label_style = """
+title_label_style = """
 QLabel {
     color: white;
     background-color: #444444;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: bold;
     padding: 4px;
     border-radius: 8px;
 }
 """
-boldie_label_style = """
+bold_label_style = """
 QLabel {
     color: white;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: bold;
 }
 """
 
-
-#fixme: THIS ENTIRE CLASS BELOW
-class SmoothScrollMixin:
-    """
-    Mixin that adds smooth scroll-wheel animation to ANY widget
-    containing a QScrollArea named 'scroll'.
-
-    Requirements:
-        - The class using this mixin MUST have:
-              self.scroll -> QScrollArea
-    """
-
-    def _init_smooth_scroll(self):
-        self._scroll_anim = None
-        self._scroll_target = 0
-
-    def wheelEvent(self, event):
-        if not hasattr(self, "scroll"):
-            # Fallback: behave normally
-            return super().wheelEvent(event)
-
-        scroll_bar = None
-        # Pick horizontal vs vertical automatically
-        if self.scroll.horizontalScrollBar().maximum() > 0:
-            scroll_bar = self.scroll.horizontalScrollBar()
-        elif self.scroll.verticalScrollBar().maximum() > 0:
-            scroll_bar = self.scroll.verticalScrollBar()
-        else:
-            # No scrollable range → do default scroll
-            return super().wheelEvent(event)
-
-        # scale wheel input
-        delta = event.angleDelta().y() / 4
-
-        # accumulate target
-        if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
-            self._scroll_target -= delta
-        else:
-            self._scroll_target = scroll_bar.value() - delta
-
-        # clamp
-        self._scroll_target = max(scroll_bar.minimum(),
-                                  min(scroll_bar.maximum(), self._scroll_target))
-
-        anim = QPropertyAnimation(scroll_bar, b"value")
-        anim.setDuration(150)
-        anim.setStartValue(scroll_bar.value())
-        anim.setEndValue(self._scroll_target)
-        anim.start()
-        self._scroll_anim = anim
-
-        event.accept()
+# Lines
+class VLine(QWidget):
+    def __init__(self):
+        super().__init__(None)
 
 
 class HScrollWidget(QWidget):
     """
-    A reusable horizontal scroll widget where you can add widgets (e.g., image covers)
+    A reusable horizontally scrollable widget with smooth scrolling.
+    Perfect for image covers, playlists, rows of cards, etc.
     """
-    def __init__(self, parent=None, item_height=200, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False):
+    def __init__(self, parent=None, item_height=200, item_spacing=10,
+                 h_scroll_bar=False, v_scroll_bar=False):
         super().__init__(parent)
 
-        # --- settings ---
         self.item_height = item_height
         self.item_spacing = item_spacing
 
-        # --- keep animation state (important!) ---
         self._scroll_anim = None
         self._scroll_target = 0
 
@@ -154,17 +106,19 @@ class HScrollWidget(QWidget):
         # --- scroll area ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
-        if h_scroll_bar:
-            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        else:
-            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        if v_scroll_bar:
-            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        else:
-            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setFixedHeight(self.item_height + 20)
 
-        # --- container (holds the horizontal items) ---
+        self.scroll.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarAlwaysOn if h_scroll_bar else Qt.ScrollBarAlwaysOff
+        )
+        self.scroll.setVerticalScrollBarPolicy(
+            Qt.ScrollBarAlwaysOn if v_scroll_bar else Qt.ScrollBarAlwaysOff
+        )
+
+        # IMPORTANT: catch wheel events on the viewport
+        self.scroll.viewport().installEventFilter(self)
+
+        # --- container that holds row items ---
         self.container = QWidget()
         self.h_layout = QHBoxLayout(self.container)
         self.h_layout.setContentsMargins(10, 0, 10, 0)
@@ -173,79 +127,80 @@ class HScrollWidget(QWidget):
         self.scroll.setWidget(self.container)
         self.main_layout.addWidget(self.scroll)
 
-    def add_widget(self, widget: QWidget):
-        """
-        Add a widget to the scroll area.
-        Forces the widget to have the fixed height of this scroll widget.
-        """
-        widget.setFixedHeight(self.item_height)
-        self.h_layout.addWidget(widget)
+    # -------------------------------------------------------------
+    # Event filter to capture wheel events (ALWAYS works)
+    # -------------------------------------------------------------
+    def eventFilter(self, obj, event):
+        if obj is self.scroll.viewport() and event.type() == event.Type.Wheel:
+            return self._handle_wheel(event)
+        return super().eventFilter(obj, event)
 
-    def add_image(self, image_path: str):
-        """
-        Add an image QLabel, automatically scaled to fixed height while preserving aspect ratio.
-        """
-        label = QLabel()
-        pix = QPixmap(image_path)
-        if pix.isNull():
-            print(f"Warning: could not load image '{image_path}'")
-            return
+    # -------------------------------------------------------------
+    # Smooth horizontal wheel scrolling
+    # -------------------------------------------------------------
+    def _handle_wheel(self, event):
+        scroll_bar = self.scroll.horizontalScrollBar()
 
-        # Scale to fixed height, keep aspect ratio
-        pix = pix.scaledToHeight(self.item_height, Qt.SmoothTransformation)
-        label.setPixmap(pix)
-        label.setFixedSize(pix.size())
-        label.setScaledContents(True)
-        label.setCursor(Qt.PointingHandCursor)
-        self.add_widget(label)
-
-    def wheelEvent(self, event):
-        """
-        Smooth horizontal scrolling using an accumulating animation target.
-        Guards included so missing attributes or zero-range scroll do not crash.
-        """
-        try:
-            scroll_bar = self.scroll.horizontalScrollBar()
-        except Exception:
-            event.ignore()
-            return
-
-        # If there's no range to scroll, ignore and don't animate
+        # If no scrolling possible
         if scroll_bar.maximum() == scroll_bar.minimum():
-            event.ignore()
-            return
+            return False
 
-        # Scale wheel delta for feel; adjust divisor to taste
+        # Horizontal scrolling uses vertical wheel delta (.y)
         delta = event.angleDelta().y()
 
-        # If an animation is running, accumulate into the existing target.
-        # Use QAbstractAnimation.Running for the comparison (not the instance attribute).
+        # Accumulate if animation running
         if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
             self._scroll_target -= delta
         else:
             self._scroll_target = scroll_bar.value() - delta
 
-        # Clamp target
-        self._scroll_target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), self._scroll_target))
+        # Clamp
+        self._scroll_target = max(scroll_bar.minimum(),
+                                  min(scroll_bar.maximum(), self._scroll_target))
 
-        # Create and start an animation from current value -> target
+        # Animate
         anim = QPropertyAnimation(scroll_bar, b"value")
-        anim.setDuration(500)
+        anim.setDuration(400)
         anim.setStartValue(scroll_bar.value())
         anim.setEndValue(self._scroll_target)
+        anim.setEasingCurve(QEasingCurve.OutCubic)
         anim.start()
 
-        # Keep reference so GC doesn't kill it mid-animation
         self._scroll_anim = anim
 
         event.accept()
+        return True
+
+    # -------------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------------
+    def add_widget(self, widget: QWidget):
+        widget.setFixedHeight(self.item_height)
+        self.h_layout.addWidget(widget)
+
+    def add_image(self, image_path: str):
+        label = QLabel()
+        pix = QPixmap(image_path)
+
+        if pix.isNull():
+            print(f"Warning: could not load image '{image_path}'")
+            return
+
+        pix = pix.scaledToHeight(self.item_height, Qt.SmoothTransformation)
+        label.setPixmap(pix)
+        label.setFixedSize(pix.size())
+        label.setScaledContents(True)
+        label.setCursor(Qt.PointingHandCursor)
+
+        self.add_widget(label)
 
 
 class VScrollWidget(QWidget):
     """
-    A reusable vertical scroll widget where you can add widgets (e.g., image covers)
+    A reusable horizontally scrollable widget with smooth scrolling.
+    Perfect for app pages, like a settings page.
     """
-    def __init__(self, parent=None, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False):
+    def __init__(self, parent=None, item_spacing=10, h_scroll_bar=False, v_scroll_bar=True):
         super().__init__(parent)
 
         self.item_spacing = item_spacing
@@ -266,6 +221,7 @@ class VScrollWidget(QWidget):
             Qt.ScrollBarAlwaysOn if v_scroll_bar else Qt.ScrollBarAlwaysOff
         )
 
+        # IMPORTANT: Install wheel filter so we ALWAYS catch scroll events
         self.scroll.viewport().installEventFilter(self)
 
         # --- container layout ---
@@ -277,16 +233,25 @@ class VScrollWidget(QWidget):
         self.scroll.setWidget(self.container)
         self.main_layout.addWidget(self.scroll)
 
+    # -------------------------------------------------------------
+    # ALWAYS receive wheel events via eventFilter
+    # -------------------------------------------------------------
     def eventFilter(self, obj, event):
         if obj is self.scroll.viewport() and event.type() == event.Type.Wheel:
             return self._handle_wheel(event)
         return super().eventFilter(obj, event)
 
+    # -------------------------------------------------------------
+    # Smooth scrolling
+    # -------------------------------------------------------------
     def _handle_wheel(self, event):
         scroll_bar = self.scroll.verticalScrollBar()
+
+        # If no scrolling needed
         if scroll_bar.maximum() == scroll_bar.minimum():
             return False
 
+        # Stronger delta (smooth but noticeable)
         delta = event.angleDelta().y()
 
         # If an animation is running, accumulate
@@ -301,7 +266,7 @@ class VScrollWidget(QWidget):
 
         # Animation
         anim = QPropertyAnimation(scroll_bar, b"value")
-        anim.setDuration(500)
+        anim.setDuration(400)
         anim.setStartValue(scroll_bar.value())
         anim.setEndValue(self._scroll_target)
         anim.setEasingCurve(QEasingCurve.OutCubic)
@@ -313,6 +278,9 @@ class VScrollWidget(QWidget):
         event.accept()
         return True  # event fully handled
 
+    # -------------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------------
     def add_widget(self, widget):
         self.v_layout.addWidget(widget)
 
