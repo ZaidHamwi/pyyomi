@@ -29,7 +29,6 @@ def write_to_appdata(relative_path, data):
 
     print(f"Data written to: {full_path}")
 
-
 def read_from_appdata(relative_path):
     # Get the path to the Roaming AppData directory
     appdata_path = os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming')
@@ -49,19 +48,6 @@ def read_from_appdata(relative_path):
 
     print(f"Data read from: {full_path}")
     return data
-
-
-# For reading embedded files
-# def resource_path(relative_path):
-#     """ Get the absolute path to the resource (for both exe and dev modes) """
-#     try:
-#         # If the application is running as a PyInstaller executable
-#         base_path = sys._MEIPASS
-#     except AttributeError:
-#         # If running in development mode
-#         base_path = os.path.abspath(".")
-#
-#     return os.path.join(base_path, relative_path)
 
 def resource_path(relative_path):
     """ Get the absolute path to the resource (for both exe and dev modes) """
@@ -91,6 +77,7 @@ QLabel {
     font-weight: bold;
 }
 """
+
 
 #fixme: THIS ENTIRE CLASS BELOW
 class SmoothScrollMixin:
@@ -145,13 +132,12 @@ class SmoothScrollMixin:
         event.accept()
 
 
-class ScrollWidget(QWidget, SmoothScrollMixin):
+class HScrollWidget(QWidget):
     """
     A reusable horizontal scroll widget where you can add widgets (e.g., image covers)
     """
     def __init__(self, parent=None, item_height=200, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False):
         super().__init__(parent)
-        self._init_smooth_scroll()
 
         # --- settings ---
         self.item_height = item_height
@@ -220,6 +206,97 @@ class ScrollWidget(QWidget, SmoothScrollMixin):
         """
         try:
             scroll_bar = self.scroll.horizontalScrollBar()
+        except Exception:
+            event.ignore()
+            return
+
+        # If there's no range to scroll, ignore and don't animate
+        if scroll_bar.maximum() == scroll_bar.minimum():
+            event.ignore()
+            return
+
+        # Scale wheel delta for feel; adjust divisor to taste
+        delta = event.angleDelta().y() / 2
+
+        # If an animation is running, accumulate into the existing target.
+        # Use QAbstractAnimation.Running for the comparison (not the instance attribute).
+        if self._scroll_anim and self._scroll_anim.state() == QAbstractAnimation.Running:
+            self._scroll_target -= delta
+        else:
+            self._scroll_target = scroll_bar.value() - delta
+
+        # Clamp target
+        self._scroll_target = max(scroll_bar.minimum(), min(scroll_bar.maximum(), self._scroll_target))
+
+        # Create and start an animation from current value -> target
+        anim = QPropertyAnimation(scroll_bar, b"value")
+        anim.setDuration(150)
+        anim.setStartValue(scroll_bar.value())
+        anim.setEndValue(self._scroll_target)
+        anim.start()
+
+        # Keep reference so GC doesn't kill it mid-animation
+        self._scroll_anim = anim
+
+        event.accept()
+
+
+class VScrollWidget(QWidget):
+    """
+    A reusable vertical scroll widget where you can add widgets (e.g., image covers)
+    """
+    def __init__(self, parent=None, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False):
+        super().__init__(parent)
+
+        # --- settings ---
+        self.item_spacing = item_spacing
+
+        # --- keep animation state (important!) ---
+        self._scroll_anim = None
+        self._scroll_target = 0
+
+        # --- main layout ---
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # --- scroll area ---
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        if h_scroll_bar:
+            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        else:
+            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        if v_scroll_bar:
+            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        else:
+            self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        # --- container (holds the vertical items) ---
+        self.container = QWidget()
+        self.v_layout = QVBoxLayout(self.container)
+        self.v_layout.setContentsMargins(10, 0, 10, 0)
+        self.v_layout.setSpacing(self.item_spacing)
+
+        self.scroll.setWidget(self.container)
+        self.main_layout.addWidget(self.scroll)
+
+    def add_widget(self, widget: QWidget):
+        """
+        Add a widget to the scroll area.
+        Forces the widget to have the fixed height of this scroll widget.
+        """
+        self.v_layout.addWidget(widget)
+
+    def add_stretch(self):
+        self.v_layout.addStretch()
+
+    def wheelEvent(self, event):
+        """
+        Smooth vertical scrolling using an accumulating animation target.
+        Guards included so missing attributes or zero-range scroll do not crash.
+        """
+        try:
+            scroll_bar = self.scroll.verticalScrollBar()
         except Exception:
             event.ignore()
             return
