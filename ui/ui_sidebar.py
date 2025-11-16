@@ -13,16 +13,23 @@ class Sidebar(QWidget):
 
         buttons = {
             "Home": "home",
-            "Anime": "settings",
-            "Movies": "settings",
-            "Shows": "settings",
-            "Manga": "settings",
-            "Manhwa": "settings",
-            "Light Novels": "settings",
-            "e-Books": "settings",
-            "Watched": "settings",
-            "Want to Watch": "settings",
-            "Dropped": "settings",
+            "Anime": "settings2",
+            "Movies": "settings3",
+            "Shows": "settings4",
+            "Manga": "settings5",
+            "Manhwa": "settings6",
+            "Light Novels": "settings7",
+            "e-Books": "settings8",
+            "Watched": "settings9",
+            "Want to Watch": "settings10",
+            "Dropped": "settings11",
+            "1": "settings12",
+            "2": "settings13",
+            "3": "settings14",
+            "4": "settings15",
+            "5": "settings16",
+            "6": "settings17",
+            "7": "settings18",
             "Settings": "settings"
         }
 
@@ -63,6 +70,18 @@ class Sidebar(QWidget):
             self.button_map[name] = btn
 
         layout.addStretch()
+
+        # --- Compute minimum height ---
+        total_height = 0
+        for btn in self.button_map.values():
+            total_height += btn.sizeHint().height()
+        print(total_height)
+
+        # add layout spacing between buttons
+        spacing = self.layout().spacing()
+        total_height += spacing * (len(self.button_map) - 1)
+
+        self.setMinimumHeight(total_height)
 
         # Default selected page
         self.select_page("home")

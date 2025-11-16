@@ -84,7 +84,24 @@ class App(QtWidgets.QMainWindow):
         # Add pages
         self.pages = {
             "home": HomePage(),
-            "settings": SettingsPage()
+            "settings": SettingsPage(),
+            "settings2": SettingsPage(),
+            "settings3": SettingsPage(),
+            "settings4": SettingsPage(),
+            "settings5": SettingsPage(),
+            "settings6": SettingsPage(),
+            "settings7": SettingsPage(),
+            "settings8": SettingsPage(),
+            "settings9": SettingsPage(),
+            "settings10": SettingsPage(),
+            "settings11": SettingsPage(),
+            "settings12": SettingsPage(),
+            "settings13": SettingsPage(),
+            "settings14": SettingsPage(),
+            "settings15": SettingsPage(),
+            "settings16": SettingsPage(),
+            "settings17": SettingsPage(),
+            "settings18": SettingsPage()
         }
         for page in self.pages.values():
             self.stack.addWidget(page)
