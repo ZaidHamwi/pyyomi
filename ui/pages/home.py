@@ -14,7 +14,6 @@ class HomePage(QWidget):
         # Home title
         home_title = QLabel("Home")
         home_title.setStyleSheet(title_label_style)
-        # home_title.setFixedWidth(75)
         outer_layout.addWidget(home_title)
 
         top_divider = QFrame()
