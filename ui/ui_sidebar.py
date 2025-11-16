@@ -18,7 +18,7 @@ class Sidebar(QWidget):
         self.scroll_area = VScrollWidget(
             item_spacing=0,
             h_scroll_bar=False,
-            v_scroll_bar=False,
+            v_scroll_bar=True,
             container_name="sidebar_container"
         )
         layout.addWidget(self.scroll_area)  # sidebar is now scrollable
