@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QButtonGroup
 from PySide6.QtCore import Signal
 
+from common_fn import VScrollWidget   # <-- your reusable scroll widget
+
 
 class Sidebar(QWidget):
     page_selected = Signal(str)
@@ -8,9 +10,21 @@ class Sidebar(QWidget):
     def __init__(self):
         super().__init__()
 
+        # ---- outer layout ----
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
+        # ---- replace direct layout with your scroll widget ----
+        self.scroll_area = VScrollWidget(
+            item_spacing=0,
+            h_scroll_bar=False,
+            v_scroll_bar=False
+        )
+        layout.addWidget(self.scroll_area)  # sidebar is now scrollable
+
+        # -----------------------------------------
+        # BUTTON LIST
+        # -----------------------------------------
         buttons = {
             "Home": "home",
             "Anime": "settings2",
@@ -33,10 +47,11 @@ class Sidebar(QWidget):
             "Settings": "settings"
         }
 
-        # group ensures only ONE is checked at a time
+        # ---- exclusive checked behavior ----
         self.btn_group = QButtonGroup(self)
         self.btn_group.setExclusive(True)
 
+        # ---- styles ----
         self.setStyleSheet("""
             QWidget {
                 background-color: #1a1a1a;
@@ -57,40 +72,29 @@ class Sidebar(QWidget):
             }
         """)
 
-        # store button references
         self.button_map = {}
 
+        # -----------------------------------------
+        # ADD BUTTONS INTO THE SCROLLING LAYOUT
+        # -----------------------------------------
         for label, name in buttons.items():
             btn = QPushButton(label)
-            btn.setCheckable(True)    # <--- IMPORTANT
+            btn.setCheckable(True)
             btn.clicked.connect(lambda checked, n=name: self.select_page(n))
-            layout.addWidget(btn)
 
+            self.scroll_area.add_widget(btn)
             self.btn_group.addButton(btn)
             self.button_map[name] = btn
 
-        layout.addStretch()
+        self.scroll_area.add_stretch()
 
-        # --- Compute minimum height ---
-        total_height = 0
-        for btn in self.button_map.values():
-            total_height += btn.sizeHint().height()
-        print(total_height)
-
-        # add layout spacing between buttons
-        spacing = self.layout().spacing()
-        total_height += spacing * (len(self.button_map) - 1)
-
-        self.setMinimumHeight(total_height)
-
-        # Default selected page
+        # default selection
         self.select_page("home")
 
+    # -----------------------------------------
+    # highlight + emit page name
+    # -----------------------------------------
     def select_page(self, name: str):
-        """Highlight the selected button + emit signal."""
-        # check the correct button
         btn = self.button_map[name]
         btn.setChecked(True)
-
-        # emit page name
         self.page_selected.emit(name)
