@@ -2,7 +2,7 @@ import os
 import sys
 from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem
 
 
 def write_to_appdata(relative_path, data):
@@ -89,8 +89,8 @@ class HScrollWidget(QWidget):
     A reusable horizontally scrollable widget with smooth scrolling.
     Perfect for image covers, playlists, rows of cards, etc.
     """
-    def __init__(self, parent=None, item_height=200, item_spacing=10,
-                 h_scroll_bar=False, v_scroll_bar=False):
+    def __init__(self, parent=None, item_height=200, item_spacing=10, h_scroll_bar=False, v_scroll_bar=False,
+                 container_name="h_container"):
         super().__init__(parent)
 
         self.item_height = item_height
@@ -120,6 +120,7 @@ class HScrollWidget(QWidget):
 
         # --- container that holds row items ---
         self.container = QWidget()
+        self.container.setObjectName(container_name)
         self.h_layout = QHBoxLayout(self.container)
         self.h_layout.setContentsMargins(10, 0, 10, 0)
         self.h_layout.setSpacing(self.item_spacing)
@@ -178,6 +179,12 @@ class HScrollWidget(QWidget):
         widget.setFixedHeight(self.item_height)
         self.h_layout.addWidget(widget)
 
+    def add_spacer(self, width, height):
+        self.h_layout.addSpacerItem(QSpacerItem(width, height))
+
+    def add_stretch(self):
+        self.h_layout.addStretch()
+
     def add_image(self, image_path: str):
         label = QLabel()
         pix = QPixmap(image_path)
@@ -200,7 +207,8 @@ class VScrollWidget(QWidget):
     A reusable horizontally scrollable widget with smooth scrolling.
     Perfect for app pages, like a settings page.
     """
-    def __init__(self, parent=None, item_spacing=10, h_scroll_bar=False, v_scroll_bar=True):
+    def __init__(self, parent=None, item_spacing=10, h_scroll_bar=False, v_scroll_bar=True,
+                 container_name="v_container"):
         super().__init__(parent)
 
         self.item_spacing = item_spacing
@@ -226,6 +234,7 @@ class VScrollWidget(QWidget):
 
         # --- container layout ---
         self.container = QWidget()
+        self.container.setObjectName(container_name)
         self.v_layout = QVBoxLayout(self.container)
         self.v_layout.setContentsMargins(10, 0, 10, 0)
         self.v_layout.setSpacing(self.item_spacing)
@@ -286,3 +295,6 @@ class VScrollWidget(QWidget):
 
     def add_stretch(self):
         self.v_layout.addStretch()
+
+    def add_spacer(self, width, height):
+        self.v_layout.addSpacerItem(QSpacerItem(width, height))

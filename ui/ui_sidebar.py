@@ -18,9 +18,11 @@ class Sidebar(QWidget):
         self.scroll_area = VScrollWidget(
             item_spacing=0,
             h_scroll_bar=False,
-            v_scroll_bar=False
+            v_scroll_bar=False,
+            container_name="sidebar_container"
         )
         layout.addWidget(self.scroll_area)  # sidebar is now scrollable
+        self.scroll_area.add_spacer(10, 10)
 
         # -----------------------------------------
         # BUTTON LIST
@@ -53,9 +55,11 @@ class Sidebar(QWidget):
 
         # ---- styles ----
         self.setStyleSheet("""
-            QWidget {
+            QWidget#sidebar_container {
                 background-color: #1a1a1a;
+                border-radius: 4px;
             }
+
             QPushButton {
                 color: white;
                 background-color: transparent;
@@ -64,11 +68,15 @@ class Sidebar(QWidget):
                 text-align: left;
                 font-weight: bold;
             }
+
             QPushButton:hover {
                 background-color: #2a2a2a;
+                border-radius: 8px;
             }
+
             QPushButton:checked {
                 background-color: #3a3a3a;
+                border-radius: 8px;
             }
         """)
 
@@ -85,6 +93,8 @@ class Sidebar(QWidget):
             self.scroll_area.add_widget(btn)
             self.btn_group.addButton(btn)
             self.button_map[name] = btn
+
+        self.scroll_area.add_spacer(10, 10)
 
         self.scroll_area.add_stretch()
 
