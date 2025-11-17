@@ -29,23 +29,6 @@ class Sidebar(QWidget):
         # -----------------------------------------
         buttons = {
             "Home": "home",
-            "Anime": "settings2",
-            "Movies": "settings3",
-            "Shows": "settings4",
-            "Manga": "settings5",
-            "Manhwa": "settings6",
-            "Light Novels": "settings7",
-            "e-Books": "settings8",
-            "Watched": "settings9",
-            "Want to Watch": "settings10",
-            "Dropped": "settings11",
-            "1": "settings12",
-            "2": "settings13",
-            "3": "settings14",
-            "4": "settings15",
-            "5": "settings16",
-            "6": "settings17",
-            "7": "settings18",
             "Settings": "settings"
         }
 

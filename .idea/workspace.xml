@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping - scrolling sidebar rounded off corners" />
+    <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping - scroll bar">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -306,7 +308,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763278129884</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Prototyping - scroll bar">
+      <option name="closed" value="true" />
+      <created>1763278195785</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1763278195785</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -327,6 +337,7 @@
     <MESSAGE value="Prototyping" />
     <MESSAGE value="Prototyping - scrolling sidebar" />
     <MESSAGE value="Prototyping - scrolling sidebar rounded off corners" />
-    <option name="LAST_COMMIT_MESSAGE" value="Prototyping - scrolling sidebar rounded off corners" />
+    <MESSAGE value="Prototyping - scroll bar" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prototyping - scroll bar" />
   </component>
 </project>
