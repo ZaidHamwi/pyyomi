@@ -16,7 +16,7 @@ base_prompt = """Give me the following pieces of data about the media/content I 
 I need the:
 Title
 Author(s) (give me only one if there are way too many, you can also give me two with a '&' between them)
-Artist(s) (give me only one if there are way too many, you can also give me two with a '&' between them)
+Artist(s) (GIVE ME THE NAME OF THE STUDIO(s) THAT PRODUCED THE CONTENT)
 Description (or like a spoiler-less synopsis) (ONLY IN ONE LINE, TRY TO MAKE IT LOOK LIKE AN OFFICIAL SYNOPSIS)
 A list of Genres (like a minimum of 4 and a maximum of like 15, depends of what you think is suitable SEPARATED BY COMMAS, ON ONE LINE)
 Status number, (0 = Unknown, 1 = Ongoing, 2 = Completed, 3 = Licensed, 4 = Publishing finished, 5 = Cancelled, 6 = On hiatus) Most of the time it's gona be a number 2
@@ -41,11 +41,13 @@ Action, Dark, Fantasy, Super Natural, Post-apocaliptic, Horror, Mystery
 
 
 STICK TO THIS FORMAT VERY VERY STRICTLY BECAUSE YOUR RESPONSE WILL BE USED BY A PROGRAM THAT WILL USE THIS DATA TO BUILD A "details.json" FILE AND IT CANNOT ACCEPT ANY OTHER FORMAT TO FUNCTION
-YOU MUST SEND ONLY 6 LINES OF TEXT. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE AT ALL."""
+YOU MUST SEND ONLY 6 LINES OF TEXT. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE AT ALL.
+
+MAKE SURE YOU STICK TO WHAT YOU FIND ON THE WEB. DONT GUESS OR ASSUME WRITERS OR ARTISTS/STUDIOS ON YOUR OWN. EVERYTHING YOU MUST BE SURE OF 100%."""
 
 def ask_prompt(content_name, extra):
     if extra:
-        guide = f"{content_name}   {extra}"
+        guide = f"{content_name}   Extra information that could help you: {extra}"
     else:
         guide = f"{content_name}"
         print(guide)
