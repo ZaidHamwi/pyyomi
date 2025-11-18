@@ -1,3 +1,7 @@
+"""
+Contains any reusable functions/widgets/stylesheets etc.
+"""
+
 import os
 import sys
 from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer
