@@ -1,8 +1,8 @@
 import os
 import sys
-from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem
+from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer
+from PySide6.QtGui import QPixmap, QPen, QColor, QPainter, QPainterPath
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem, QLineEdit
 
 
 def write_to_appdata(relative_path, data):
@@ -78,12 +78,13 @@ QLabel {
 }
 """
 
-# Lines
+# Lines fixme: NOT DONE
 class VLine(QWidget):
     def __init__(self):
         super().__init__(None)
 
 
+# Widgets
 class HScrollWidget(QWidget):
     """
     A reusable horizontally scrollable widget with smooth scrolling.
@@ -201,7 +202,6 @@ class HScrollWidget(QWidget):
 
         self.add_widget(label)
 
-
 class VScrollWidget(QWidget):
     """
     A reusable horizontally scrollable widget with smooth scrolling.
@@ -298,3 +298,108 @@ class VScrollWidget(QWidget):
 
     def add_spacer(self, width, height):
         self.v_layout.addSpacerItem(QSpacerItem(width, height))
+
+class SearchBarWdg(QLineEdit):
+    LABEL_NAME = None
+    placeholder_text = "Search..."
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setPlaceholderText(self.placeholder_text)
+
+    def update_search_placeholder(self, item_count: int):
+        if not item_count:
+            self.setPlaceholderText(self.placeholder_text)
+            return
+        self.setPlaceholderText(f"{self.placeholder_text}\t({item_count})")
+
+
+# --- Custom Icon Widgets ---
+class PendingIcon(QWidget):
+    """A widget that draws a sharp, static circle for the pending icon."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(16, 16)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        pen = QPen(QColor("#888"))
+        pen.setWidth(3)
+        painter.setPen(pen)
+        painter.drawEllipse(self.rect().adjusted(2, 2, -2, -2))
+
+class RotatingSpinner(QWidget):
+    """A widget that displays a rotating semicircle animation."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.angle = 0
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self._update_rotation)
+        self.setFixedSize(16, 16)
+
+    def _update_rotation(self):
+        self.angle = (self.angle - 20) % 360
+        self.update()
+
+    def start_animation(self):
+        self.timer.start(20)
+
+    def stop_animation(self):
+        self.timer.stop()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        pen = QPen(QColor("#888"))
+        pen.setWidth(3)
+        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+        painter.setPen(pen)
+        painter.drawArc(self.rect().adjusted(2, 2, -2, -2), self.angle * 16, 180 * 16)
+
+class SuccessIcon(QWidget):
+    """A widget that draws a sharp circle with a checkmark."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(16, 16)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor("#888"))
+        painter.drawEllipse(self.rect())
+        pen = QPen(Qt.GlobalColor.white)
+        pen.setWidth(2)
+        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+        pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+        painter.setPen(pen)
+        path = QPainterPath()
+        path.moveTo(4.5, 8.5)
+        path.lineTo(7, 11)
+        path.lineTo(12, 6)
+        painter.drawPath(path)
+
+class ErrorIcon(QWidget):
+    """A widget that draws a sharp, red circle with an 'X' for errors."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(16, 16)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor("#D32F2F"))
+        painter.drawEllipse(self.rect())
+        pen = QPen(Qt.GlobalColor.white)
+        pen.setWidth(2)
+        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+        painter.setPen(pen)
+        inner_rect = self.rect().adjusted(4, 4, -4, -4)
+        painter.drawLine(inner_rect.topLeft(), inner_rect.bottomRight())
+        painter.drawLine(inner_rect.topRight(), inner_rect.bottomLeft())
+
+
+

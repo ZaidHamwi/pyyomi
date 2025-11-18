@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping - scroll bar">
+    <list default="true" id="56acb74e-7ea7-41c6-bc2b-0446a5fcaf77" name="Changes" comment="Prototyping">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common_fn.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_fn.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.ui_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.wdg_splashscreen.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
@@ -316,7 +318,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763278195785</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Prototyping">
+      <option name="closed" value="true" />
+      <created>1763384954786</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1763384954786</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -334,10 +344,10 @@
     <MESSAGE value="Set up&#10;&#10;(cherry picked from commit a32b4124febac876581841a36ee2590773274dc6)" />
     <MESSAGE value="Set up&#10;&#10;(cherry picked from commit a32b4124febac876581841a36ee2590773274dc6)" />
     <MESSAGE value="Set up" />
-    <MESSAGE value="Prototyping" />
     <MESSAGE value="Prototyping - scrolling sidebar" />
     <MESSAGE value="Prototyping - scrolling sidebar rounded off corners" />
     <MESSAGE value="Prototyping - scroll bar" />
-    <option name="LAST_COMMIT_MESSAGE" value="Prototyping - scroll bar" />
+    <MESSAGE value="Prototyping" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prototyping" />
   </component>
 </project>
