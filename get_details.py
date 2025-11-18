@@ -64,23 +64,6 @@ IF YOU FEEL LIKE THERE HAS BEEN A PROBLEM WITH THE GIVEN INFORMATION AND YOU CAN
 
     return response.text
 
-# data = {
-#             "title": title,
-#             "author": author,
-#             "artist": artist,
-#             "description": description,
-#             "genre": genres,
-#             "status": str(status_index),
-#             "_status values": [
-#                 "0 = Unknown",
-#                 "1 = Ongoing",
-#                 "2 = Completed",
-#                 "3 = Licensed",
-#                 "4 = Publishing finished",
-#                 "5 = Cancelled",
-#                 "6 = On hiatus"
-#             ]
-#         }
 
 #todo: find a way to link folder path of desired content with json creation below
 
@@ -91,7 +74,24 @@ IF YOU FEEL LIKE THERE HAS BEEN A PROBLEM WITH THE GIVEN INFORMATION AND YOU CAN
 #             json.dump(data, f, ensure_ascii=False, indent=2)
 #     except Exception as e:
 #         print(f"ERROR: {e}")
-
+#
+#   data = {
+#               "title": title,
+#               "author": author,
+#               "artist": artist,
+#               "description": description,
+#               "genre": genres,
+#               "status": str(status_index),
+#               "_status values": [
+#                   "0 = Unknown",
+#                   "1 = Ongoing",
+#                   "2 = Completed",
+#                   "3 = Licensed",
+#                   "4 = Publishing finished",
+#                   "5 = Cancelled",
+#                   "6 = On hiatus"
+#               ]
+#           }
 
 def run_demo():
     print("DEMO")
@@ -102,6 +102,7 @@ def run_demo():
     else:
         extra = f"EXTRA DETAILS TO HELP YOU: {extra_in}"
     details_txt = ask_prompt(content_name, extra)
+
     print()
     print("Details:")
     print(details_txt)
