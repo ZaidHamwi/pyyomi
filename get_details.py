@@ -17,7 +17,7 @@ I need the:
 Title
 Author(s) (give me only one if there are way too many, you can also give me two with a '&' between them)
 Artist(s) (give me only one if there are way too many, you can also give me two with a '&' between them)
-Description (or like a spoiler-less synopsis) (ONLY IN ONE LINE, TRY TO BE BRIEF)
+Description (or like a spoiler-less synopsis) (ONLY IN ONE LINE, TRY TO MAKE IT LOOK LIKE AN OFFICIAL SYNOPSIS)
 A list of Genres (like a minimum of 4 and a maximum of like 15, depends of what you think is suitable SEPARATED BY COMMAS, ON ONE LINE)
 Status number, (0 = Unknown, 1 = Ongoing, 2 = Completed, 3 = Licensed, 4 = Publishing finished, 5 = Cancelled, 6 = On hiatus) Most of the time it's gona be a number 2
 
@@ -56,7 +56,7 @@ IF YOU FEEL LIKE THERE HAS BEEN A PROBLEM WITH THE GIVEN INFORMATION AND YOU CAN
 
     prompt = f"""{base_prompt}
     
-    {guide}"""
+    {added_piece}"""
 
     response = model.generate_content(prompt)
 
