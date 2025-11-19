@@ -89,6 +89,23 @@ class VLine(QWidget):
 
 
 # Widgets
+def rounded_pixmap(pixmap, radius):
+    size = pixmap.size()
+    rounded = QPixmap(size)
+    rounded.fill(Qt.transparent)
+
+    painter = QPainter(rounded)
+    painter.setRenderHint(QPainter.Antialiasing)
+
+    path = QPainterPath()
+    path.addRoundedRect(0, 0, size.width(), size.height(), radius, radius)
+    painter.setClipPath(path)
+
+    painter.drawPixmap(0, 0, pixmap)
+    painter.end()
+
+    return rounded
+
 class HScrollWidget(QWidget):
     """
     A reusable horizontally scrollable widget with smooth scrolling.
@@ -198,7 +215,12 @@ class HScrollWidget(QWidget):
             print(f"Warning: could not load image '{image_path}'")
             return
 
+        # Scale first
         pix = pix.scaledToHeight(self.item_height, Qt.SmoothTransformation)
+
+        # Convert to rounded pixmap (choose radius you like, e.g. 20)
+        pix = rounded_pixmap(pix, radius=5)
+
         label.setPixmap(pix)
         label.setFixedSize(pix.size())
         label.setScaledContents(True)
