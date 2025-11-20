@@ -40,3 +40,5 @@ class HomePage(QWidget):
         # DEMO IMAGES
         for i in range(10):
             continue_wdg.add_image(resource_path("embedded_images/demo.jpg"))
+
+        continue_wdg.add_stretch()
