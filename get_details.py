@@ -3,12 +3,16 @@ Ask Gemini to provide all the details of content in a formatted way that'll be t
 """
 
 import google.generativeai as genai
-from personal_data import gemini_api_key as api_key  # GET YOUR OWN KEY (╯▔皿▔)╯
+
+# TEMPORARY IMPORT:
+from personal_data import gemini_api_key as api_key  # String of api key, looks something like this: "AujkhfdHuiyu....."
+
+
 import json
 import os
 
 
-genai.configure(api_key=api_key)  # GET YOUR OWN KEY :D
+genai.configure(api_key=api_key)  # GET YOUR OWN KEY (╯▔皿▔)╯
 model = genai.GenerativeModel(model_name='gemini-2.5-flash')
 
 base_prompt = """Give me the following pieces of data about the media/content I will inform you of shortly.
@@ -67,31 +71,38 @@ IF YOU FEEL LIKE THERE HAS BEEN A PROBLEM WITH THE GIVEN INFORMATION AND YOU CAN
 
 #todo: find a way to link folder path of desired content with json creation below
 
-# def create_json():
-#     try:
-#         file_path = os.path.join(main_folder, "details.json")
-#         with open(file_path, "w", encoding="utf-8") as f:
-#             json.dump(data, f, ensure_ascii=False, indent=2)
-#     except Exception as e:
-#         print(f"ERROR: {e}")
-#
-#   data = {
-#               "title": title,
-#               "author": author,
-#               "artist": artist,
-#               "description": description,
-#               "genre": genres,
-#               "status": str(status_index),
-#               "_status values": [
-#                   "0 = Unknown",
-#                   "1 = Ongoing",
-#                   "2 = Completed",
-#                   "3 = Licensed",
-#                   "4 = Publishing finished",
-#                   "5 = Cancelled",
-#                   "6 = On hiatus"
-#               ]
-#           }
+def create_json(details, path):
+
+    split_details = details.split("\n")
+
+    genres = [genre.strip() for genre in split_details[4].split(",")]
+
+    data = {
+        "title": split_details[0],
+        "author": split_details[1],
+        "artist": split_details[2],
+        "description": split_details[3],
+        "genre": genres,
+        "status": split_details[5],
+        "_status values": [
+           "0 = Unknown",
+           "1 = Ongoing",
+           "2 = Completed",
+            "3 = Licensed",
+            "4 = Publishing finished",
+            "5 = Cancelled",
+            "6 = On hiatus"
+        ]
+    }
+
+    try:
+        file_path = os.path.join(path, "details.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"Saved file: {file_path}")
+    except Exception as e:
+        print(f"ERROR: {e}")
+
 
 def run_demo():
     print("DEMO")
@@ -106,6 +117,16 @@ def run_demo():
     print()
     print("Details:")
     print(details_txt)
+    print()
+
+    folder_path = input("Folder Path to save JSON file to: ")
+    print()
+
+    create_json(details_txt, folder_path)
+
+
+
+
 
 
 if __name__ == "__main__":
