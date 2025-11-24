@@ -116,7 +116,7 @@ def rounded_pixmap(pixmap, radius):
 
 
 class CollapsibleWidget(QWidget):
-    def __init__(self, title: str = "Section", animation_duration: int = 250):
+    def __init__(self, title: str = "Section", animation_duration: int = 200):
         super().__init__()
         self._expanded = False
 
