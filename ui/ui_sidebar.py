@@ -21,7 +21,7 @@ class Sidebar(QWidget):
             container_name="sidebar_container"
         )
         layout.addWidget(self.scroll_area)
-        self.scroll_area.add_spacer(10, 10)
+        self.scroll_area.addSpacer(10, 10)
 
         buttons = {
             "Home": "home",
@@ -66,16 +66,16 @@ class Sidebar(QWidget):
             btn.setCheckable(True)
             btn.clicked.connect(lambda checked, n=name: self.select_page(n))
 
-            self.scroll_area.add_widget(btn)
+            self.scroll_area.addWidget(btn)
             if str(name) == "settings":
                 print("ADDING STRETCH")
 
             self.btn_group.addButton(btn)
             self.button_map[name] = btn
 
-        self.scroll_area.add_spacer(10, 10)
+        self.scroll_area.addSpacer(10, 10)
 
-        self.scroll_area.add_stretch()
+        self.scroll_area.addStretch()
 
         # default selection todo: allow user to decide default page through settings...
         self.select_page("home")

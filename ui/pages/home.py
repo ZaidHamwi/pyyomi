@@ -29,16 +29,16 @@ class HomePage(QWidget):
         # Continue Watching section title
         continue_watching_title = QLabel("Continue Watching...")
         continue_watching_title.setStyleSheet(bold_label_style)
-        home_wdg.add_widget(continue_watching_title)
+        home_wdg.addWidget(continue_watching_title)
 
         # Horizontal scroll widget with images
         continue_wdg = HScrollWidget()
-        home_wdg.add_widget(continue_wdg)
+        home_wdg.addWidget(continue_wdg)
 
-        home_wdg.add_stretch()
+        home_wdg.addStretch()
 
         # DEMO IMAGES
         for i in range(10):
-            continue_wdg.add_image(resource_path("embedded_images/demo.jpg"))
+            continue_wdg.addImage(resource_path("embedded_images/demo.jpg"))
 
-        continue_wdg.add_stretch()
+        continue_wdg.addStretch()

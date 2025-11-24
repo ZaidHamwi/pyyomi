@@ -4,9 +4,10 @@ Contains any reusable functions/widgets/stylesheets etc.
 
 import os
 import sys
-from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer
-from PySide6.QtGui import QPixmap, QPen, QColor, QPainter, QPainterPath
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem, QLineEdit
+from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer, Slot
+from PySide6.QtGui import QPixmap, QPen, QColor, QPainter, QPainterPath, QMouseEvent, QFont
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem, QLineEdit, \
+    QToolButton, QSizePolicy, QFrame
 
 
 def write_to_appdata(relative_path, data):
@@ -106,6 +107,86 @@ def rounded_pixmap(pixmap, radius):
 
     return rounded
 
+
+class ClickableHeader(QWidget):
+    def mousePressEvent(self, event: QMouseEvent):
+        if hasattr(self.parent(), "toggle"):
+            self.parent().toggle()
+        super().mousePressEvent(event)
+
+
+class CollapsibleWidget(QWidget):
+    def __init__(self, title: str = "Section", animation_duration: int = 250):
+        super().__init__()
+        self._expanded = False
+        self.animation_duration = animation_duration
+
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        # MAIN rounded container layout
+        root_layout = QVBoxLayout(self)
+        root_layout.setContentsMargins(12, 12, 12, 12)
+        root_layout.setSpacing(0)
+
+        # Header
+        self.header = ClickableHeader(self)
+        header_layout = QHBoxLayout(self.header)
+        header_layout.setContentsMargins(8, 8, 8, 8)
+
+        font = QFont()
+        font.setPointSize(11)
+
+        self.title = QLabel(title)
+        self.title.setFont(font)
+        # self.title.setStyleSheet("color: white;")
+        header_layout.addWidget(self.title)
+
+        self.arrow = QLabel("▼")
+        self.arrow.setFont(font)
+        # self.arrow.setStyleSheet("color: white;")
+        header_layout.addWidget(self.arrow)
+
+        root_layout.addWidget(self.header)
+
+        # Content area (collapsible)
+        self.content_widget = QWidget()
+        self.content_layout = QVBoxLayout(self.content_widget)
+        self.content_layout.setContentsMargins(8, 8, 8, 8)
+        self.content_layout.setSpacing(6)
+        self.content_widget.setMaximumHeight(0)
+
+        root_layout.addWidget(self.content_widget)
+
+        # Smooth animation
+        self.animation = QPropertyAnimation(self.content_widget, b"maximumHeight")
+        self.animation.setDuration(animation_duration)
+        self.animation.setEasingCurve(QEasingCurve.InOutCubic)
+
+        # Rounded dark styling
+        self.setStyleSheet("""
+            CollapsibleWidget {
+                background-color: #2a2a2a;
+                border-radius: 12px;
+            }
+        """)
+
+    @Slot()
+    def toggle(self):
+        self._expanded = not self._expanded
+        self.arrow.setText("▲" if self._expanded else "▼")
+
+        # Proper height measurement (this is the key fix!)
+        content_height = self.content_widget.layout().sizeHint().height()
+
+        self.animation.stop()
+        self.animation.setStartValue(self.content_widget.maximumHeight())
+        self.animation.setEndValue(content_height if self._expanded else 0)
+        self.animation.start()
+
+    def addWidget(self, widget):
+        self.content_layout.addWidget(widget)
+
+
 class HScrollWidget(QWidget):
     """
     A reusable horizontally scrollable widget with smooth scrolling.
@@ -191,17 +272,17 @@ class HScrollWidget(QWidget):
         return True
 
     # Public API
-    def add_widget(self, widget: QWidget):
+    def addWidget(self, widget: QWidget):
         widget.setFixedHeight(self.item_height)
         self.h_layout.addWidget(widget)
 
-    def add_spacer(self, width, height):
+    def addSpacer(self, width, height):
         self.h_layout.addSpacerItem(QSpacerItem(width, height))
 
-    def add_stretch(self):
+    def addStretch(self):
         self.h_layout.addStretch()
 
-    def add_image(self, image_path: str, corner_radius=5):
+    def addImage(self, image_path: str, corner_radius=5):
         label = QLabel()
         pix = QPixmap(image_path)
 
@@ -220,7 +301,8 @@ class HScrollWidget(QWidget):
         label.setScaledContents(True)
         label.setCursor(Qt.PointingHandCursor)
 
-        self.add_widget(label)
+        self.addWidget(label)
+
 
 class VScrollWidget(QWidget):
     """
@@ -304,14 +386,15 @@ class VScrollWidget(QWidget):
         return True  # event fully handled
 
     # Public API
-    def add_widget(self, widget):
+    def addWidget(self, widget):
         self.v_layout.addWidget(widget)
 
-    def add_stretch(self):
+    def addStretch(self):
         self.v_layout.addStretch()
 
-    def add_spacer(self, width, height):
+    def addSpacer(self, width, height):
         self.v_layout.addSpacerItem(QSpacerItem(width, height))
+
 
 class SearchBarWdg(QLineEdit):
     LABEL_NAME = None
@@ -326,6 +409,7 @@ class SearchBarWdg(QLineEdit):
             self.setPlaceholderText(self.placeholder_text)
             return
         self.setPlaceholderText(f"{self.placeholder_text}\t({item_count})")
+
 
 
 # --- Custom Icon Widgets ---
