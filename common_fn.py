@@ -108,13 +108,6 @@ def rounded_pixmap(pixmap, radius):
     return rounded
 
 
-# class ClickableHeader(QWidget):
-#     def mousePressEvent(self, event: QMouseEvent):
-#         if hasattr(self.parent(), "toggle"):
-#             self.parent().toggle()
-#         super().mousePressEvent(event)
-
-
 class CollapsibleWidget(QWidget):
     def __init__(self, title: str = "Section", animation_duration: int = 200):
         super().__init__()
