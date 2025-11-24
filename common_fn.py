@@ -108,74 +108,97 @@ def rounded_pixmap(pixmap, radius):
     return rounded
 
 
-class ClickableHeader(QWidget):
-    def mousePressEvent(self, event: QMouseEvent):
-        if hasattr(self.parent(), "toggle"):
-            self.parent().toggle()
-        super().mousePressEvent(event)
+# class ClickableHeader(QWidget):
+#     def mousePressEvent(self, event: QMouseEvent):
+#         if hasattr(self.parent(), "toggle"):
+#             self.parent().toggle()
+#         super().mousePressEvent(event)
 
 
 class CollapsibleWidget(QWidget):
     def __init__(self, title: str = "Section", animation_duration: int = 250):
         super().__init__()
         self._expanded = False
-        self.animation_duration = animation_duration
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        # MAIN rounded container layout
-        root_layout = QVBoxLayout(self)
-        root_layout.setContentsMargins(12, 12, 12, 12)
-        root_layout.setSpacing(0)
+        # === MAIN WRAPPER ===
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
 
-        # Header
-        self.header = ClickableHeader(self)
+        # === SINGLE BUBBLE CONTAINER ===
+        self.bubble = QWidget()
+        self.bubble.setObjectName("bubble")
+        bubble_layout = QVBoxLayout(self.bubble)
+        bubble_layout.setContentsMargins(12, 12, 12, 12)
+        bubble_layout.setSpacing(0)
+
+        main_layout.addWidget(self.bubble)
+
+        # === CLICKABLE HEADER ===
+        self.header = QWidget(self.bubble)
+        self.header.setObjectName("header")
         header_layout = QHBoxLayout(self.header)
         header_layout.setContentsMargins(8, 8, 8, 8)
+        header_layout.setSpacing(10)
 
         font = QFont()
         font.setPointSize(11)
 
-        self.title = QLabel(title)
-        self.title.setFont(font)
-        # self.title.setStyleSheet("color: white;")
-        header_layout.addWidget(self.title)
+        self.title_label = QLabel(title)
+        self.title_label.setFont(font)
+        self.title_label.setStyleSheet("color: white;")
+        self.title_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.title_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.arrow = QLabel("▼")
         self.arrow.setFont(font)
-        # self.arrow.setStyleSheet("color: white;")
+        self.arrow.setStyleSheet("color: white;")
+        self.arrow.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.arrow.setFixedWidth(25)
+        self.arrow.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        header_layout.addWidget(self.title_label)
+        header_layout.addItem(spacer)
         header_layout.addWidget(self.arrow)
 
-        root_layout.addWidget(self.header)
+        bubble_layout.addWidget(self.header)
 
-        # Content area (collapsible)
+        # === CONTENT AREA ===
         self.content_widget = QWidget()
         self.content_layout = QVBoxLayout(self.content_widget)
-        self.content_layout.setContentsMargins(8, 8, 8, 8)
+        self.content_layout.setContentsMargins(10, 6, 10, 10)
         self.content_layout.setSpacing(6)
         self.content_widget.setMaximumHeight(0)
+        bubble_layout.addWidget(self.content_widget)
 
-        root_layout.addWidget(self.content_widget)
-
-        # Smooth animation
+        # === ANIMATION ===
         self.animation = QPropertyAnimation(self.content_widget, b"maximumHeight")
         self.animation.setDuration(animation_duration)
         self.animation.setEasingCurve(QEasingCurve.InOutCubic)
 
-        # Rounded dark styling
+        # === STYLE ===
         self.setStyleSheet("""
-            CollapsibleWidget {
+            QWidget#bubble {
                 background-color: #2a2a2a;
                 border-radius: 12px;
             }
         """)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        # Enable clicking anywhere on header only
+        if self.header.rect().contains(self.header.mapFromParent(event.position().toPoint())):
+            self.toggle()
+        super().mousePressEvent(event)
 
     @Slot()
     def toggle(self):
         self._expanded = not self._expanded
         self.arrow.setText("▲" if self._expanded else "▼")
 
-        # Proper height measurement (this is the key fix!)
         content_height = self.content_widget.layout().sizeHint().height()
 
         self.animation.stop()

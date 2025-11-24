@@ -20,6 +20,8 @@ class SettingsPage(QWidget):
         top_divider.setFrameShadow(QFrame.Sunken)
         outer_layout.addWidget(top_divider)
 
+
+        # SETTING TILES
         collapsible = CollapsibleWidget("Pet Details")
         collapsible.addWidget(QLabel("Name: PIKA"))
         collapsible.addWidget(QLabel("Age: 5"))
