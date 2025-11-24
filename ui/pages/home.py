@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea, QFrame
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame
 from common_fn import title_label_style, resource_path, HScrollWidget, VScrollWidget, \
     bold_label_style
 

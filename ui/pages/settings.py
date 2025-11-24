@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame, QPushButton
 
-from common_fn import title_label_style, VScrollWidget, bold_label_style, HScrollWidget, CollapsibleWidget
+from common_fn import title_label_style, VScrollWidget, bold_label_style, CollapsibleWidget
 
 
 class SettingsPage(QWidget):

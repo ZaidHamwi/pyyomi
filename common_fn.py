@@ -4,10 +4,10 @@ Contains any reusable functions/widgets/stylesheets etc.
 
 import os
 import sys
-from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer, Slot
+from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer, Slot, QPointF
 from PySide6.QtGui import QPixmap, QPen, QColor, QPainter, QPainterPath, QMouseEvent, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem, QLineEdit, \
-    QToolButton, QSizePolicy, QFrame
+    QSizePolicy
 
 
 def write_to_appdata(relative_path, data):
@@ -122,23 +122,21 @@ class CollapsibleWidget(QWidget):
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        # === MAIN WRAPPER ===
+        # Main layout
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        # === SINGLE BUBBLE CONTAINER ===
+        # Bubble container
         self.bubble = QWidget()
         self.bubble.setObjectName("bubble")
         bubble_layout = QVBoxLayout(self.bubble)
         bubble_layout.setContentsMargins(12, 12, 12, 12)
         bubble_layout.setSpacing(0)
-
         main_layout.addWidget(self.bubble)
 
-        # === CLICKABLE HEADER ===
+        # Header
         self.header = QWidget(self.bubble)
-        self.header.setObjectName("header")
         header_layout = QHBoxLayout(self.header)
         header_layout.setContentsMargins(8, 8, 8, 8)
         header_layout.setSpacing(10)
@@ -146,28 +144,25 @@ class CollapsibleWidget(QWidget):
         font = QFont()
         font.setPointSize(11)
 
+        # Title label
         self.title_label = QLabel(title)
         self.title_label.setFont(font)
-        self.title_label.setStyleSheet("color: white;")
+        self.title_label.setStyleSheet(bold_label_style)
         self.title_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.title_label.setAttribute(Qt.WA_TransparentForMouseEvents)
 
         spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.arrow = QLabel("▼")
-        self.arrow.setFont(font)
-        self.arrow.setStyleSheet("color: white;")
-        self.arrow.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.arrow.setFixedWidth(25)
-        self.arrow.setAttribute(Qt.WA_TransparentForMouseEvents)
+        # Arrow icon
+        self.arrow_icon = DownArrowIcon()
 
         header_layout.addWidget(self.title_label)
         header_layout.addItem(spacer)
-        header_layout.addWidget(self.arrow)
+        header_layout.addWidget(self.arrow_icon)
 
         bubble_layout.addWidget(self.header)
 
-        # === CONTENT AREA ===
+        # Content area
         self.content_widget = QWidget()
         self.content_layout = QVBoxLayout(self.content_widget)
         self.content_layout.setContentsMargins(10, 6, 10, 10)
@@ -175,12 +170,12 @@ class CollapsibleWidget(QWidget):
         self.content_widget.setMaximumHeight(0)
         bubble_layout.addWidget(self.content_widget)
 
-        # === ANIMATION ===
+        # Animation
         self.animation = QPropertyAnimation(self.content_widget, b"maximumHeight")
         self.animation.setDuration(animation_duration)
         self.animation.setEasingCurve(QEasingCurve.InOutCubic)
 
-        # === STYLE ===
+        # Bubble style
         self.setStyleSheet("""
             QWidget#bubble {
                 background-color: #2a2a2a;
@@ -189,18 +184,27 @@ class CollapsibleWidget(QWidget):
         """)
 
     def mousePressEvent(self, event: QMouseEvent):
-        # Enable clicking anywhere on header only
-        if self.header.rect().contains(self.header.mapFromParent(event.position().toPoint())):
+        # Toggle if clicked inside header
+        if self.header.geometry().contains(event.position().toPoint()):
             self.toggle()
         super().mousePressEvent(event)
 
     @Slot()
     def toggle(self):
         self._expanded = not self._expanded
-        self.arrow.setText("▲" if self._expanded else "▼")
 
+        # Replace arrow icon
+        self.arrow_icon.setParent(None)  # remove old
+        if self._expanded:
+            self.arrow_icon = UpArrowIcon()
+        else:
+            self.arrow_icon = DownArrowIcon()
+
+        self.header.layout().addWidget(self.arrow_icon)
+        self.header.layout().setStretch(0, 1)
+
+        # Animate content
         content_height = self.content_widget.layout().sizeHint().height()
-
         self.animation.stop()
         self.animation.setStartValue(self.content_widget.maximumHeight())
         self.animation.setEndValue(content_height if self._expanded else 0)
@@ -436,6 +440,52 @@ class SearchBarWdg(QLineEdit):
 
 
 # --- Custom Icon Widgets ---
+class DownArrowIcon(QWidget):
+    """Small sharp downward pointing arrow."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(16, 16)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        pen = QPen(QColor("#888"))
+        pen.setWidth(2)
+        painter.setPen(pen)
+        painter.setBrush(QColor("#888"))
+
+        w, h = self.width(), self.height()
+        # Triangle pointing straight down
+        points = [
+            QPointF(w * 0.2, h * 0.4),
+            QPointF(w * 0.8, h * 0.4),
+            QPointF(w * 0.5, h * 0.7)
+        ]
+        painter.drawPolygon(points)
+
+class UpArrowIcon(QWidget):
+    """Small sharp upward pointing arrow."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(16, 16)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        pen = QPen(QColor("#888"))
+        pen.setWidth(2)
+        painter.setPen(pen)
+        painter.setBrush(QColor("#888"))
+
+        w, h = self.width(), self.height()
+        # Triangle pointing straight up
+        points = [
+            QPointF(w * 0.2, h * 0.6),
+            QPointF(w * 0.8, h * 0.6),
+            QPointF(w * 0.5, h * 0.3)
+        ]
+        painter.drawPolygon(points)
+
 class PendingIcon(QWidget):
     """A widget that draws a sharp, static circle for the pending icon."""
     def __init__(self, parent=None):

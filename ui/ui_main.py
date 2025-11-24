@@ -1,6 +1,4 @@
 import sys
-import os
-import qtawesome
 from PySide6.QtWidgets import QStackedWidget, QFrame
 from PySide6 import QtWidgets
 from PySide6.QtGui import QIcon
@@ -101,7 +99,6 @@ class App(QtWidgets.QMainWindow):
         page = self.pages.get(name)
         if page:
             self.stack.setCurrentWidget(page)
-
 
 if __name__ == '__main__':
     print(__name__)
