@@ -137,7 +137,7 @@ class HScrollWidget(QWidget):
             Qt.ScrollBarAlwaysOn if v_scroll_bar else Qt.ScrollBarAlwaysOff
         )
 
-        # IMPORTANT: catch wheel events on the viewport
+        # catch wheel events on the viewport
         self.scroll.viewport().installEventFilter(self)
 
         # --- container that holds row items ---
@@ -150,17 +150,13 @@ class HScrollWidget(QWidget):
         self.scroll.setWidget(self.container)
         self.main_layout.addWidget(self.scroll)
 
-    # -------------------------------------------------------------
-    # Event filter to capture wheel events (ALWAYS works)
-    # -------------------------------------------------------------
+    # Event filter to capture wheel events
     def eventFilter(self, obj, event):
         if obj is self.scroll.viewport() and event.type() == event.Type.Wheel:
             return self._handle_wheel(event)
         return super().eventFilter(obj, event)
 
-    # -------------------------------------------------------------
     # Smooth horizontal wheel scrolling
-    # -------------------------------------------------------------
     def _handle_wheel(self, event):
         scroll_bar = self.scroll.horizontalScrollBar()
 
@@ -194,9 +190,7 @@ class HScrollWidget(QWidget):
         event.accept()
         return True
 
-    # -------------------------------------------------------------
     # Public API
-    # -------------------------------------------------------------
     def add_widget(self, widget: QWidget):
         widget.setFixedHeight(self.item_height)
         self.h_layout.addWidget(widget)
@@ -207,7 +201,7 @@ class HScrollWidget(QWidget):
     def add_stretch(self):
         self.h_layout.addStretch()
 
-    def add_image(self, image_path: str):
+    def add_image(self, image_path: str, corner_radius=5):
         label = QLabel()
         pix = QPixmap(image_path)
 
@@ -219,7 +213,7 @@ class HScrollWidget(QWidget):
         pix = pix.scaledToHeight(self.item_height, Qt.SmoothTransformation)
 
         # Convert to rounded pixmap (choose radius you like, e.g. 20)
-        pix = rounded_pixmap(pix, radius=5)
+        pix = rounded_pixmap(pix, radius=corner_radius)
 
         label.setPixmap(pix)
         label.setFixedSize(pix.size())
@@ -255,7 +249,7 @@ class VScrollWidget(QWidget):
             Qt.ScrollBarAlwaysOn if v_scroll_bar else Qt.ScrollBarAlwaysOff
         )
 
-        # IMPORTANT: Install wheel filter so we ALWAYS catch scroll events
+        # catch wheel events on the viewport
         self.scroll.viewport().installEventFilter(self)
 
         # --- container layout ---
@@ -268,17 +262,13 @@ class VScrollWidget(QWidget):
         self.scroll.setWidget(self.container)
         self.main_layout.addWidget(self.scroll)
 
-    # -------------------------------------------------------------
-    # ALWAYS receive wheel events via eventFilter
-    # -------------------------------------------------------------
+    # receive wheel events via eventFilter
     def eventFilter(self, obj, event):
         if obj is self.scroll.viewport() and event.type() == event.Type.Wheel:
             return self._handle_wheel(event)
         return super().eventFilter(obj, event)
 
-    # -------------------------------------------------------------
     # Smooth scrolling
-    # -------------------------------------------------------------
     def _handle_wheel(self, event):
         scroll_bar = self.scroll.verticalScrollBar()
 
@@ -313,9 +303,7 @@ class VScrollWidget(QWidget):
         event.accept()
         return True  # event fully handled
 
-    # -------------------------------------------------------------
     # Public API
-    # -------------------------------------------------------------
     def add_widget(self, widget):
         self.v_layout.addWidget(widget)
 
