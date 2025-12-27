@@ -2,7 +2,7 @@
 Ask Gemini to provide all the details of content in a formatted way that'll be then saved into a "details.json" file.
 """
 
-import google.generativeai as genai
+import google.genai as genai
 
 # TEMPORARY IMPORT:
 from personal_data import gemini_api_key as api_key  # String of api key, looks something like this: "AujkhfdHuiyu....."
@@ -12,8 +12,8 @@ import json
 import os
 
 
-genai.configure(api_key=api_key)  # GET YOUR OWN KEY (╯▔皿▔)╯
-model = genai.GenerativeModel(model_name='gemini-2.5-flash')
+client = genai.Client(api_key=api_key)  # GET YOUR OWN KEY (╯▔皿▔)╯
+model = client.models.get(model='gemini-2.5-flash')
 
 base_prompt = """Give me the following pieces of data about the media/content I will inform you of shortly.
 
@@ -64,7 +64,7 @@ IF YOU FEEL LIKE THERE HAS BEEN A PROBLEM WITH THE GIVEN INFORMATION AND YOU CAN
     
     {added_piece}"""
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
 
     return response.text
 
