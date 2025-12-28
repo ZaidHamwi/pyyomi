@@ -35,6 +35,8 @@ class SettingsPage(QWidget):
         settings_wdg = VScrollWidget()
         outer_layout.addWidget(settings_wdg)
 
+        settings_wdg.addSpacer(10, 10)
+
         settings_wdg.addWidget(collapsible)
         settings_wdg.addWidget(collapsible2)
 
