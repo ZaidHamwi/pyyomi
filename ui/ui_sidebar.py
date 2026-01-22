@@ -67,8 +67,6 @@ class Sidebar(QWidget):
             btn.clicked.connect(lambda checked, n=name: self.select_page(n))
 
             self.scroll_area.addWidget(btn)
-            if str(name) == "settings":
-                print("ADDING STRETCH")
 
             self.btn_group.addButton(btn)
             self.button_map[name] = btn
