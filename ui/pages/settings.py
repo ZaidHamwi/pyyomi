@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame, QPushButton
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame, QPushButton, QHBoxLayout
 
 from common_fn import title_label_style, VScrollWidget, bold_label_style, CollapsibleWidget
 
@@ -22,10 +22,16 @@ class SettingsPage(QWidget):
 
 
         # SETTING TILES
-        collapsible = CollapsibleWidget("Pet Details")
-        collapsible.addWidget(QLabel("Name: PIKA"))
-        collapsible.addWidget(QLabel("Age: 5"))
-        collapsible.addWidget(QPushButton("Edit Profile"))
+        data_and_storage = CollapsibleWidget("Data and storage")
+        data_and_storage.addWidget(QLabel("Storage location:"))
+        data_and_storage.addWidget(QLabel("Library size:"))
+        data_and_storage.addWidget(QLabel("Disk space:"))
+        data_and_storage.addWidget(QLabel("Automatic backup frequency:"))
+        backup_buttons_wdg = QWidget()
+        backup_buttons_layout = QHBoxLayout(backup_buttons_wdg)
+        backup_buttons_layout.addWidget(QPushButton("Create backup"))
+        backup_buttons_layout.addWidget(QPushButton("Restore backup"))
+        data_and_storage.addWidget(backup_buttons_wdg)
 
         collapsible2 = CollapsibleWidget("Preferences")
         collapsible2.addWidget(QPushButton("Enable Notifications"))
@@ -37,7 +43,7 @@ class SettingsPage(QWidget):
 
         settings_wdg.addSpacer(10, 10)
 
-        settings_wdg.addWidget(collapsible)
+        settings_wdg.addWidget(data_and_storage)
         settings_wdg.addWidget(collapsible2)
 
 

@@ -89,6 +89,7 @@ class App(QtWidgets.QMainWindow):
 
 
     def populate_ui(self):
+        #todo: checks assigned folder(s) and builds "available content" library
         print('Populated UI.')
 
     def connect_signals(self):
