@@ -22,6 +22,10 @@ class SettingsPage(QWidget):
 
 
         # SETTING TILES
+        preferences = CollapsibleWidget("Preferences")
+        preferences.addWidget(QPushButton("Enable Notifications"))
+        preferences.addWidget(QPushButton("Change Theme"))
+
         data_and_storage = CollapsibleWidget("Data and storage")
         data_and_storage.addWidget(QLabel("Storage location:"))
         data_and_storage.addWidget(QLabel("Library size:"))
@@ -33,18 +37,14 @@ class SettingsPage(QWidget):
         backup_buttons_layout.addWidget(QPushButton("Restore backup"))
         data_and_storage.addWidget(backup_buttons_wdg)
 
-        collapsible2 = CollapsibleWidget("Preferences")
-        collapsible2.addWidget(QPushButton("Enable Notifications"))
-        collapsible2.addWidget(QPushButton("Change Theme"))
-
 
         settings_wdg = VScrollWidget()
         outer_layout.addWidget(settings_wdg)
 
         settings_wdg.addSpacer(10, 10)
 
+        settings_wdg.addWidget(preferences)
         settings_wdg.addWidget(data_and_storage)
-        settings_wdg.addWidget(collapsible2)
 
 
         settings_wdg.addStretch()
