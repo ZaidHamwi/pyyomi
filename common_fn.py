@@ -7,7 +7,7 @@ import sys
 from PySide6.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QEasingCurve, QTimer, Slot, QPointF
 from PySide6.QtGui import QPixmap, QPen, QColor, QPainter, QPainterPath, QMouseEvent, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QLabel, QSpacerItem, QLineEdit, \
-    QSizePolicy
+    QSizePolicy, QFrame
 
 
 def write_to_appdata(relative_path, data):
@@ -84,9 +84,31 @@ QLabel {
 """
 
 # Lines fixme: NOT DONE
-class VLine(QWidget):
-    def __init__(self):
-        super().__init__(None)
+class HLine(QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setFrameShape(QFrame.HLine)
+        self.setFrameShadow(QFrame.Sunken)
+        self.setLineWidth(1)
+        self.setMidLineWidth(0)
+        self.setSizePolicy(
+            self.sizePolicy().horizontalPolicy(),
+            self.sizePolicy().verticalPolicy()
+        )
+
+class VLine(QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setFrameShape(QFrame.VLine)
+        self.setFrameShadow(QFrame.Sunken)
+        self.setLineWidth(1)
+        self.setMidLineWidth(0)
+        self.setSizePolicy(
+            self.sizePolicy().horizontalPolicy(),
+            self.sizePolicy().verticalPolicy()
+        )
 
 
 # Widgets
