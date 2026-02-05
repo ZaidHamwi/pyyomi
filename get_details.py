@@ -11,6 +11,7 @@ from personal_data import gemini_api_key as api_key  # String of api key, looks 
 import json
 import os
 
+#todo: save api keys in json file, multiple api keys for when they run out of tokens.
 
 client = genai.Client(api_key=api_key)  # GET YOUR OWN KEY (╯▔皿▔)╯
 model = client.models.get(model='gemini-2.5-flash')
