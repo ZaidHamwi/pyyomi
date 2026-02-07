@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame, QPushButton, QHBoxLayout
 
-from common_fn import title_label_style, VScrollWidget, bold_label_style, CollapsibleWidget
+from common_fn import title_label_style, VScrollWidget, bold_label_style, CollapsibleWidget, HLine
 
 
 class SettingsPage(QWidget):
@@ -15,9 +15,7 @@ class SettingsPage(QWidget):
         settings_title.setStyleSheet(title_label_style)
         outer_layout.addWidget(settings_title)
 
-        top_divider = QFrame()
-        top_divider.setFrameShape(QFrame.HLine)
-        top_divider.setFrameShadow(QFrame.Sunken)
+        top_divider = HLine()
         outer_layout.addWidget(top_divider)
 
 

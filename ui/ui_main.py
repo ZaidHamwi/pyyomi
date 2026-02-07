@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QStackedWidget, QFrame
 from PySide6 import QtWidgets
 from PySide6.QtGui import QIcon
 
-from common_fn import read_from_appdata, write_to_appdata, resource_path
+from common_fn import read_from_appdata, write_to_appdata, resource_path, VLine, HLine
 
 from ui.pages.home import HomePage
 from ui.pages.settings import SettingsPage
@@ -71,9 +71,7 @@ class App(QtWidgets.QMainWindow):
         self.sidebar.setFixedWidth(150)
 
         # Vertical QFrame
-        v_line = QFrame()
-        v_line.setFrameShape(QFrame.VLine)
-        v_line.setFrameShadow(QFrame.Sunken)
+        v_line = VLine()
         self.layout.addWidget(v_line)
 
         # STACK

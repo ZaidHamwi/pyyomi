@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QFrame
 from common_fn import title_label_style, resource_path, HScrollWidget, VScrollWidget, \
-    bold_label_style
+    bold_label_style, HLine
 
 
 class HomePage(QWidget):
@@ -15,9 +15,7 @@ class HomePage(QWidget):
         home_title.setStyleSheet(title_label_style)
         outer_layout.addWidget(home_title)
 
-        top_divider = QFrame()
-        top_divider.setFrameShape(QFrame.HLine)
-        top_divider.setFrameShadow(QFrame.Sunken)
+        top_divider = HLine()
         outer_layout.addWidget(top_divider)
 
         home_wdg = VScrollWidget()

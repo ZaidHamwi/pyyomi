@@ -12,6 +12,7 @@ import json
 import os
 
 #todo: save api keys in json file, multiple api keys for when they run out of tokens.
+#todo: dont save detail data to file instantly, let user confirm/make changes beforehand with a window similar to folder flattener one
 
 client = genai.Client(api_key=api_key)  # GET YOUR OWN KEY (╯▔皿▔)╯
 model = client.models.get(model='gemini-2.5-flash')
